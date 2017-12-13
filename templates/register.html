@@ -1,0 +1,19 @@
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+
+{% from "_formhelpers.html" import render_field %}
+<form class="form-horizontal" method=post>
+  <dl>
+    {{ render_field(form.title, class="form-control") }}
+    {{ render_field(form.fromEmail, class="form-control") }}
+    {{ render_field(form.receiverList, class="form-control") }}
+    {{ render_field(form.noOfStages, class="form-control") }}
+    {{ render_field(form.frequency) }}
+  </dl>
+  <p><input class="btn btn-default" type=submit value="Configure Emails">
+</form>
