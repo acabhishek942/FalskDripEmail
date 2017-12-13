@@ -12,6 +12,8 @@ import google.oauth2.credentials
 import google_auth_oauthlib.flow
 import googleapiclient.discovery
 
+from werkzeug.contrib.fixers import ProxyFix
+
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_ckeditor import CKEditor
@@ -26,6 +28,7 @@ from flask import request, render_template, flash
 app = flask.Flask(__name__)
 app.secret_key = 'somethingsecret'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test2.db'
+app.wsgi_app = ProxyFix(app.wsgi_app)
 with app.app_context():
     db.init_app(app)
 migrate = Migrate(app, db)
