@@ -11,7 +11,9 @@
   <dl>
     {{ render_field(form.title, class="form-control") }}
     {{ render_field(form.receiverList, class="form-control") }}
-    <p> comma seperated email no space </p>
+    <p>
+      format: (email),(firstName),(lastname);(email),(firstName),(lastname)semi-colon seperated email no space
+     </p>
     {{ render_field(form.noOfStages, class="form-control") }}
     {{ render_field(form.frequency) }}
   </dl>

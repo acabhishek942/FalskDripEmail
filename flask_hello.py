@@ -182,22 +182,16 @@ def addEmail():
         # Add Email to DB
         db.session.add(email)
         db.session.commit()
-        recipients = Campaign.query.filter_by(
-                        unique_id=flask.session['campaign_id']).first().recipients
 
         # counter for number of email templates required
         flask.session['frequency'] = flask.session['frequency'] - 1
         if flask.session['frequency'] == 0:
             # see documentation in utils.emailUtils.CreateMessage
             # use celery background task here to send emails
-            for recipient in recipients.split(","):
-                message =  CreateMessage(recipient,
-                        flask.session['fromEmail'],
-                         "Welcome Message " + flask.session['campaign'],
-                         "Welcome to Drip Campaign " + flask.session['campaign'])
-                message['raw'] = message['raw'].decode('utf-8')
-                # see documentation in utils.emailUtils.send_message
-                send_message(gmail, "me", message)
+            sendWelcomeEmail.apply_async(args=[credentials_to_dict(credentials),
+                                    flask.session['campaign_id']], countdown=2)
+            sendCampaignEmails.apply_async(args=[credentials_to_dict(credentials),
+                                    flask.session['campaign_id']], countdown=10)
             # return campaign started after all email templates are filled
             return ("<p>Campaign Started</p> "
                     + '<p><a href="/new-campaign">Add Another Campaign</a></p>')
@@ -214,6 +208,44 @@ def credentials_to_dict(credentials):
           'client_id': credentials.client_id,
           'client_secret': credentials.client_secret,
           'scopes': credentials.scopes}
+
+@celery.task()
+def sendWelcomeEmail(credentials, campaign_id):
+    credentials = google.oauth2.credentials.Credentials(token=credentials['token'],
+                refresh_token=credentials['refresh_token'], token_uri=credentials['token_uri'],
+                client_id=credentials['client_id'], client_secret=credentials['client_secret'],
+                scopes=credentials['scopes'])
+    gmail = googleapiclient.discovery.build(
+      API_SERVICE_NAME, API_VERSION, credentials=credentials)
+    campaign = Campaign.query.filter_by(unique_id=campaign_id).first()
+    user = User.query.filter_by(unique_id=campaign.user_id).first()
+    for recipient in campaign.recipients.split(";"):
+        recipientEmail, recipientFirstName, recipientLastName = recipient.split(",")
+        message =  CreateMessage(recipientEmail,
+                user.email,
+                 "Welcome Message " + campaign.title,
+                 "Welcome to Drip Campaign " + recipientFirstName + recipientLastName )
+        message['raw'] = message['raw'].decode('utf-8')
+        # see documentation in utils.emailUtils.send_message
+        send_message(gmail, "me", message)
+
+@celery.task()
+def sendCampaignEmails(credentials, campaign_id):
+    credentials = google.oauth2.credentials.Credentials(token=credentials['token'],
+                refresh_token=credentials['refresh_token'], token_uri=credentials['token_uri'],
+                client_id=credentials['client_id'], client_secret=credentials['client_secret'],
+                scopes=credentials['scopes'])
+    gmail = googleapiclient.discovery.build(
+      API_SERVICE_NAME, API_VERSION, credentials=credentials)
+    campaign = Campaign.query.filter_by(unique_id=campaign_id).first()
+    user = User.query.filter_by(unique_id=campaign.user_id).first()
+    emails = Email.query.filter_by(campaign_id=campaign_id).all()
+    for email in emails:
+        for recipient in campaign.recipients.split(";"):
+            recipientEmail, recipientFirstName, recipientLastName = recipient.split(",")
+            message =  CreateMessage(recipientEmail, user.email,
+                                    email.subject, email.body)
+            send_message(gmail, "me", message)
 
 
 if __name__ == '__main__':
