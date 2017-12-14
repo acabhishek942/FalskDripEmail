@@ -87,7 +87,7 @@ def test_api_request():
     if request.method == 'POST' and form.validate():
         # create a Campaign object based on the form data.
         campaign = Campaign(title = form.title.data, stages = form.noOfStages.data,
-            frequency = form.frequency.data, recipients = form.receiverList.data,
+            frequency = 2, recipients = form.receiverList.data,
             user_id = user.unique_id, unique_id = uuid.uuid4().hex)
 
         # store some session variables to be used in emailTemplate form
