@@ -32,7 +32,7 @@ def send_message(service, user_id, message):
     Returns:
     Sent Message.
     """
-    message = (service.users().messages().send(userId=user_id, body=message).execute())
+    message = (service.users().messages().send(userId=user_id, body=message.decode("utf-8")).execute())
     # print 'Message Id: %s' % message['id'] "uncomment this line to get
                                             #message id of the sent message"
     return message
