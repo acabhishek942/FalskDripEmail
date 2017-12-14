@@ -1,1 +1,1 @@
-web gunicorn scribeDripEmail:app
+web gunicorn flask_hello:app
