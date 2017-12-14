@@ -75,7 +75,7 @@ def test_api_request():
     # get the user profile using Gmail API
     userProfile = gmail.users().getProfile(userId = "me").execute()
     # create a User object with the data provided by Gmail API
-    user =  User.query.filter_by(email=userProfile['emailAddress'])
+    user =  User.query.filter_by(email=userProfile['emailAddress']).first()
     flask.session['fromEmail'] = userProfile['emailAddress']
 
     # add user to DB if not present already
