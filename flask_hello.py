@@ -27,7 +27,8 @@ from flask import request, render_template, flash
 
 app = flask.Flask(__name__)
 app.secret_key = 'somethingsecret'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test2.db'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test2.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://lmeorjjdferkzy:a3d0f53608d39f2e334cd3b8e1aa3c4340a9ed6222f3ef490968c7378e570cac@ec2-54-225-94-143.compute-1.amazonaws.com:5432/da7shc2afvnmcq'
 app.wsgi_app = ProxyFix(app.wsgi_app)
 with app.app_context():
     db.init_app(app)
