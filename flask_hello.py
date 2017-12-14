@@ -38,8 +38,8 @@ with app.app_context():
 migrate = Migrate(app, db)
 ckeditor = CKEditor(app)
 app.config.update(
-    CELERY_BROKER_URL='redis://redis-tapered-60362',
-    CELERY_RESULT_BACKEND='redis://redis-tapered-60362'
+    CELERY_BROKER_URL=os.environ.get('REDISCLOUD_URL'),
+    CELERY_RESULT_BACKEND=os.environ.get('REDISCLOUD_URL')
 )
 celery = make_celery(app)
 
