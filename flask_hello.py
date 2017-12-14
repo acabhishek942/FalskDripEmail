@@ -191,7 +191,9 @@ def addEmail():
                 # see documentation in utils.emailUtils.send_message
                 send_message(gmail, "me", message)
             # return campaign started after all email templates are filled
-            return "Campaign Started"
+            return ("<p>Campaign Started</p> "
+                    + '<p><a href="/new-campaign">Add Another Campaign</a></p>')
+
         else:
             # return DripEmailTemplateForm for adding more email templates
              return render_template('email.html', form = form)
