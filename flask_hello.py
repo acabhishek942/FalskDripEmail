@@ -75,11 +75,12 @@ def test_api_request():
     # get the user profile using Gmail API
     userProfile = gmail.users().getProfile(userId = "me").execute()
     # create a User object with the data provided by Gmail API
-    user =  User(email = userProfile['emailAddress'], unique_id = uuid.uuid4().hex)
+    user =  User.query.filter_by(email=userProfile['emailAddress'])
     flask.session['fromEmail'] = userProfile['emailAddress']
 
     # add user to DB if not present already
-    if not User.query.filter_by(email=userProfile['emailAddress']):
+    if not user:
+        user = User(email = userProfile['emailAddress'], unique_id = uuid.uuid4().hex)
         db.session.add(user)
         db.session.commit()
 
