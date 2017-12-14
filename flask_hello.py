@@ -183,6 +183,7 @@ def addEmail():
                     "sjnkjsdnkj",
                      "Welcome Message " + flask.session['campaign'],
                      "Welcome to Drip Campaign " + flask.session['campaign'])
+            message['raw'] = message['raw'].decode('utf-8')
             # see documentation in utils.emailUtils.send_message
             send_message(gmail, "me", message)
             # return campaign started after all email templates are filled
