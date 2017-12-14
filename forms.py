@@ -5,7 +5,6 @@ from flask_ckeditor import CKEditorField
 
 class DripEmailBasicDetailsForm(Form):
   title  = StringField('Title')
-  fromEmail = StringField('fromEmail', [validators.Length(min=5, max=50)])
   receiverList = StringField('receiverList', [validators.Length(min=5)]) # comma seperated values without spaces
   noOfStages = IntegerField('stages')
   frequency = RadioField('frequency', choices = [
